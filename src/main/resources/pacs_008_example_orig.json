@@ -1,0 +1,73 @@
+{
+  "Document": {
+    "-xmlns": "urn:iso:std:iso:20022:tech:xsd:pacs.008.001.05",
+    "-xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+    "-xsi:schemaLocation": "urn:iso:std:iso:20022:tech:xsd:pacs.008.001.05 pacs.008.001.05.xsd",
+    "FIToFICstmrCdtTrf": {
+      "GrpHdr": {
+        "MsgId": "EEEE/100929-EUR/059",
+        "CreDtTm": "2001-12-17T09:30:47.0Z",
+        "NbOfTxs": "0",
+        "SttlmInf": {
+          "SttlmMtd": "INDA",
+          "InstdRmbrsmntAgt": {
+            "FinInstnId": {
+              "PstlAdr": { "AdrLine": "1234567890123456789012345678901234567890123456789012345678901234567890" }
+            }
+          }
+        }
+      },
+      "CdtTrfTxInf": {
+        "PmtId": {
+          "EndToEndId": "ABC/ABC-13679/2010-09-15",
+          "TxId": "BBBB/100928-CCT/EUR/912/1"
+        },
+        "IntrBkSttlmAmt": {
+          "-Ccy": "EUR",
+          "#text": "499250"
+        },
+        "IntrBkSttlmDt": "2010-09-29",
+        "InstdAmt": {
+          "-Ccy": "EUR",
+          "#text": "500000"
+        },
+        "ChrgBr": "CRED",
+        "Dbtr": {
+          "Nm": "ABC Corporation",
+          "PstlAdr": {
+            "StrtNm": "Times Square",
+            "BldgNb": "7",
+            "PstCd": "NY 10036",
+            "TwnNm": "New York",
+            "Ctry": "US"
+          }
+        },
+        "DbtrAcct": {
+          "Id": {
+            "Othr": { "Id": "00125574999" }
+          }
+        },
+        "DbtrAgt": {
+          "FinInstnId": { "BICFI": "BBBBUS33" }
+        },
+        "CdtrAgt": {
+          "FinInstnId": { "BICFI": "DDDDBEBB" }
+        },
+        "Cdtr": {
+          "Nm": "GHI Semiconductors",
+          "PstlAdr": {
+            "StrtNm": "Avenue Brugmann",
+            "BldgNb": "415",
+            "PstCd": "1180",
+            "TwnNm": "Brussels",
+            "Ctry": "BE"
+          }
+        },
+        "CdtrAcct": {
+          "Id": { "IBAN": "BE30001216371411" }
+        },
+        "Purp": { "Cd": "GDDS" }
+      }
+    }
+  }
+}
