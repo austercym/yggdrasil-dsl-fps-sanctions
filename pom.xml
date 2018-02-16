@@ -17,7 +17,11 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <casandra.version>3.3.0</casandra.version>
-		<umbrella.version>0.0.1</umbrella.version>
+        
+        <umbrella.commons.version>0.0.7-SNAPSHOT</umbrella.commons.version>
+		<umbrella.types.version>0.0.4</umbrella.types.version>
+		<umbrella.storm.version>0.0.5-SNAPSHOT</umbrella.storm.version>
+		
 		<yggdrasil.version>0.0.1</yggdrasil.version>
 		<storm.version>1.1.0</storm.version>
 		<kafka.clients.version>0.11.0.0</kafka.clients.version>
@@ -83,25 +87,31 @@
 		<dependency>
 			<groupId>com.orwellg.umbrella</groupId>
 			<artifactId>umbrella-commons</artifactId>
-			<version>${umbrella.version}</version>
+			<version>${umbrella.commons.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.orwellg.umbrella</groupId>
 			<artifactId>umbrella-commons-types</artifactId>
-			<version>${umbrella.version}</version>
+			<version>${umbrella.types.version}</version>
 		</dependency>
 		
 		<!-- UMBRELLA STORM dependencies -->
 		<dependency>
 			<groupId>com.orwellg.umbrella</groupId>
 			<artifactId>umbrella-commons-storm</artifactId>
-			<version>${umbrella.version}</version>
+			<version>${umbrella.storm.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
 					<artifactId>log4j-over-slf4j</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.orwellg.umbrella</groupId>
+		    <artifactId>umbrella-commons-nosql</artifactId>
+		    <version>0.0.3-SNAPSHOT</version>
 		</dependency>
 
 		<!-- YGGDRASIL COMMONS dependencies -->
@@ -188,25 +198,16 @@
 	<build>
 		<plugins>
 			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
 				<version>3.1.0</version>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<archive>
-						<manifest>
-							<mainClass>com.orwellg.yggdrasil.fps.sanctions.FpsSanctions</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
 				<executions>
 					<execution>
-						<id>make-assembly</id> <!-- this is used for inheritance merges -->
-						<phase>package</phase> <!-- bind to the packaging phase -->
 						<goals>
-							<goal>single</goal>
+							<goal>shade</goal>
 						</goals>
+						<configuration>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
