@@ -1,6 +1,8 @@
 package com.orwellg.yggdrasil.fps.sanctions.scylla;
 
 import com.datastax.driver.core.*;
+import com.orwellg.umbrella.commons.config.params.ScyllaParams;
+import com.orwellg.umbrella.commons.storm.config.topology.TopologyConfigFactory;
 import com.orwellg.umbrella.commons.types.fps.PaymentStatus;
 import com.orwellg.umbrella.commons.utils.scylla.ScyllaManager;
 import org.apache.logging.log4j.LogManager;
@@ -22,8 +24,9 @@ public class EiscdFasterPaymentsNoSqlDao {
 	}
 
 	public EiscdFasterPaymentsNoSqlDao(String scyllaNodes,String keySpace) {
-		man = ScyllaManager.getInstance(scyllaNodes);
-		this.ses = man.getSession(keySpace);
+		ScyllaParams scyllaParams = TopologyConfigFactory.getTopologyConfig().getScyllaConfig().getScyllaParams();
+		man = ScyllaManager.getInstance(scyllaParams);
+		this.ses = man.getSession(scyllaParams.getKeyspace());
 	}
 
 	public PaymentStatus paymentStatus(String sortCode) {

@@ -87,12 +87,12 @@ public class FpsAccountingCommandBoltFail extends BasicRichBolt {
             String debitorAccountId = null;
             String creditorAccountId = null;
 //            if (FPSDirection.INPUT.getDirection().equals(fpsPaymentRequest.getDirection())) {
-	            debitorAccountId = processorNode.getSpecialAccount(SpecialAccountTypes.SANCTIONS);;
+	            debitorAccountId = processorNode.getSpecialAccount(SpecialAccountTypes.SANCTIONS.getLiteral());;
 	            
 	            if (fpsPaymentRequest != null && fpsPaymentRequest.getCdtrAccountId() != null) {
 	            		creditorAccountId = fpsPaymentRequest.getCdtrAccountId();
 	            } else {
-	            		creditorAccountId = processorNode.getSpecialAccount(SpecialAccountTypes.EXCEPTIONS);
+	            		creditorAccountId = processorNode.getSpecialAccount(SpecialAccountTypes.EXCEPTIONS.getLiteral());
 	            }
 //            } else {
 //	            	//TODO: If direction is O: debitorAccountId = fpsPaymentRequest.getDbtrAccountId() and creditorAccountId = SpecialAccountTypes.EXCEPTIONS

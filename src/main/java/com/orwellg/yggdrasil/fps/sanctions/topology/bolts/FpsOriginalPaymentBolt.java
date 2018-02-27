@@ -37,7 +37,7 @@ public class FpsOriginalPaymentBolt extends BasicRichBolt {
         super.prepare(stormConf, context, collector);
 
         ScyllaParams topologyScyllaParams = FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig().getScyllaConfig().getScyllaParams();
-        ScyllaManager man = ScyllaManager.getInstance(topologyScyllaParams.getNodeList());
+        ScyllaManager man = ScyllaManager.getInstance(topologyScyllaParams);
         fpsPaymentRequestNoSqlDao = new FpsPaymentRequestNoSqlDao(man,topologyScyllaParams.getKeyspace());
     }
 
