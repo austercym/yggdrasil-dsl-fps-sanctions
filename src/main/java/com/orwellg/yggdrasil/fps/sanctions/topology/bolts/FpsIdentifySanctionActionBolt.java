@@ -32,8 +32,10 @@ public class FpsIdentifySanctionActionBolt extends BasicRichBolt {
 
     @Override
     public void declareFieldsDefinition() {
-        	addFielsDefinition(FpsSanctionsTopology.FPS_SANCTION_ACTION_PASS_STREAM, Arrays.asList(new String[] {"key", "processId", "result", "commandName", "eventName", "eventData", "topic", "sanctionAction"}));
-        	addFielsDefinition(FpsSanctionsTopology.FPS_SANCTION_ACTION_FAIL_STREAM, Arrays.asList(new String[] {"key", "processId", "result", "commandName", "eventName", "eventData", "topic", "sanctionAction"}));
+        	addFielsDefinition(FpsSanctionsTopology.FPS_SANCTION_ACTION_PASS_STREAM, Arrays.asList(new String[] {"key", "processId", "result", "commandName", "eventName", "eventData", "topic", "sanctionAction","fpsPaymentRequest"}));
+        	addFielsDefinition(FpsSanctionsTopology.FPS_SANCTION_ACTION_FAIL_STREAM, Arrays.asList(new String[] {"key", "processId", "result", "commandName", "eventName", "eventData", "topic", "sanctionAction","fpsPaymentRequest"}));
+            addFielsDefinition(FpsSanctionsTopology.FPS_SANCTION_FAIL_RETURN_STREAM, Arrays.asList(new String[] {"key", "processId", "result", "commandName", "eventName", "eventData", "topic", "sanctionAction","fpsPaymentRequest"}));
+
     }
 
     @Override
@@ -42,9 +44,9 @@ public class FpsIdentifySanctionActionBolt extends BasicRichBolt {
         String pmtId = null;
 
         try {
-	    		FpsPaymentRequest data = (FpsPaymentRequest) tuple.getValueByField("eventData");
-	    		FPSSanctionsAction sanctionAction = (FPSSanctionsAction) tuple.getValueByField("sanctionAction");
-	    		FpsPaymentRequest fpsPaymentRequest = (FpsPaymentRequest) tuple.getValueByField("fpsPaymentRequest");
+            FpsPaymentRequest data = (FpsPaymentRequest) tuple.getValueByField("eventData");
+            FPSSanctionsAction sanctionAction = (FPSSanctionsAction) tuple.getValueByField("sanctionAction");
+            FpsPaymentRequest fpsPaymentRequest = (FpsPaymentRequest) tuple.getValueByField("fpsPaymentRequest");
             eventKey = (String) tuple.getValueByField("key");
             pmtId = (String) tuple.getValueByField("processId");
             LOG.info("[PmtId: {}] Received fps sanction to identify sanction action with event key {}. Sanction Action: {}", pmtId, eventKey, sanctionAction.getSanctionsAction());
@@ -59,6 +61,7 @@ public class FpsIdentifySanctionActionBolt extends BasicRichBolt {
             if (FpsSanctionsTopology.FPS_SANCTION_ACTION_PASS.equals(sanctionAction.getSanctionsAction())) {
                 send(FpsSanctionsTopology.FPS_SANCTION_ACTION_PASS_STREAM, tuple, values);
             } else {
+                send(FpsSanctionsTopology.FPS_SANCTION_FAIL_RETURN_STREAM, tuple, values);
                 send(FpsSanctionsTopology.FPS_SANCTION_ACTION_FAIL_STREAM, tuple, values);
             }
 

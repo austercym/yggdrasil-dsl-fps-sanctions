@@ -62,6 +62,7 @@ public class FpsSanctionsTopology extends AbstractTopology {
     
     public static final String FPS_SANCTION_ACTION_PASS_STREAM              = "SANCTIONACTION_PASS_STREAM";
     public static final String FPS_SANCTION_ACTION_FAIL_STREAM              = "SANCTIONACTION_FAIL_STREAM";
+    public static final String FPS_SANCTION_FAIL_RETURN_STREAM              = "SANCTION_FAIL_RETURN_STREAM";
 
 	@Override
 	public StormTopology load() {
@@ -94,32 +95,24 @@ public class FpsSanctionsTopology extends AbstractTopology {
         GBolt<?> fpsAccountingCommandBoltPass = new GRichBolt(FPS_ACCOUNTING_COMMAND_COMPONENT_PASS, new FpsAccountingCommandBoltPass(), config.getActionBoltHints());
         fpsAccountingCommandBoltPass.addGrouping(new ShuffleGrouping(FPS_IDENTIFY_SANCTIONACTION_COMPONENT, FPS_SANCTION_ACTION_PASS_STREAM));
         //If fail
+
         GBolt<?> fpsAccountingCommandBoltFail = new GRichBolt(FPS_ACCOUNTING_COMMAND_COMPONENT_FAIL, new FpsAccountingCommandBoltFail(), config.getActionBoltHints());
         fpsAccountingCommandBoltFail.addGrouping(new ShuffleGrouping(FPS_IDENTIFY_SANCTIONACTION_COMPONENT, FPS_SANCTION_ACTION_FAIL_STREAM));
-        
+
+        GBolt<?> fpsCreateReturnResponseBolt = new GRichBolt(FPS_CREATE_RETURN_RESPONSE_COMPONENT, new FpsCreateReturnResponseBolt(), config.getActionBoltHints());
+        fpsCreateReturnResponseBolt.addGrouping(new ShuffleGrouping(FPS_IDENTIFY_SANCTIONACTION_COMPONENT, FPS_SANCTION_FAIL_RETURN_STREAM));
+
+        GBolt<?> kafkaReturnProducerBolt = new GRichBolt(FPS_VALIDATION_ERROR_PRODUCER_COMPONENT, new KafkaBoltFieldNameWrapper(config.getKafkaPublisherResponseBoltConfig(), String.class, String.class).getKafkaBolt(), config.getActionBoltHints());
+        kafkaReturnProducerBolt.addGrouping(new ShuffleGrouping(FPS_CREATE_RETURN_RESPONSE_COMPONENT));
+
         //Generate Command (Debit Sanctions, Credit Customer Account)
-//        GBolt<?> fpsAccountingCommandBolt = new GRichBolt(FPS_ACCOUNTING_COMMAND_COMPONENT, new FpsAccountingCommandBolt(), config.getActionBoltHints());
-//        fpsAccountingCommandBolt.addGrouping(new ShuffleGrouping(FPS_VALIDATE_CUSTOMER_ACCOUNT_COMPONENT));
         GBolt<?> eventAccountingCommandGeneratorBolt = new GRichBolt(FPS_ACCOUNTING_KAFKA_COMMAND_COMPONENT, new KafkaCommandGeneratorBolt(), config.getKafkaSpoutHints());
         eventAccountingCommandGeneratorBolt.addGrouping(new ShuffleGrouping(FPS_ACCOUNTING_COMMAND_COMPONENT_PASS));
         eventAccountingCommandGeneratorBolt.addGrouping(new ShuffleGrouping(FPS_ACCOUNTING_COMMAND_COMPONENT_FAIL));
         GBolt<?> kafkaAccountingCommandProducerBolt = new GRichBolt(FPS_ACCOUNTING_PUBLISH_COMMAND_COMPONENT, new KafkaBoltFieldNameWrapper(config.getKafkaPublisherBoltConfig(), String.class, String.class).getKafkaBolt(), config.getActionBoltHints());
         kafkaAccountingCommandProducerBolt.addGrouping(new ShuffleGrouping(FPS_ACCOUNTING_KAFKA_COMMAND_COMPONENT));
         
-        
-        // Validation Errors Handling
-//      GBolt<?> fpsValidationErrorHandlingBolt = new GRichBolt(FPS_VALIDATION_ERROR_HANDLING, new FpsErrorHandlingBolt(), config.getActionBoltHints());
-//      fpsValidationErrorHandlingBolt.addGrouping(new ShuffleGrouping(FPS_IDENTIFY_PAYMENTTYPE_COMPONENT, FpsIdentifyPaymentTypeBolt.PAYMENTTYPE_ERROR_STREAM));
-//      fpsValidationErrorHandlingBolt.addGrouping(new ShuffleGrouping(FPS_VALIDATE_SCHEME_COMPONENT, FpsValidateSchemeBolt.VALIDATE_SCHEME_ERROR_STREAM));
-//      fpsValidationErrorHandlingBolt.addGrouping(new ShuffleGrouping(FPS_VALIDATE_CUSTOMER_ACCOUNT_COMPONENT, FpsValidateCustomerAccount.FPS_VALIDATE_ACCOUNT_ERROR_STREAM));
-//
-//      GBolt<?> kafkaValidationErrorEventProducerBolt = new GRichBolt(FPS_VALIDATION_ERROR_PRODUCER_COMPONENT, new KafkaBoltFieldNameWrapper(config.getKafkaPublisherRejectBoltConfig(), String.class, String.class).getKafkaBolt(), config.getActionBoltHints());
-//      kafkaValidationErrorEventProducerBolt.addGrouping(new ShuffleGrouping(FPS_VALIDATION_ERROR_HANDLING));
-        
-        //Generate return
-//        GBolt<?> fpsCreateReturnResponseBolt = new GRichBolt(FPS_CREATE_RETURN_RESPONSE_COMPONENT, new FpsCreateReturnResponseBolt(), config.getActionBoltHints());
-//        fpsCreateReturnResponseBolt.addGrouping(new ShuffleGrouping(FPS_ACCOUNTING_COMMAND_COMPONENT));
-        
+
         // Topology Error Handling
         GBolt<?> fpsErrorHandlingBolt = new GRichBolt(FPS_ERROR_HANDLING, new EventErrorBolt(), config.getActionBoltHints());
         fpsErrorHandlingBolt.addGrouping(new ShuffleGrouping(KAFKA_EVENT_READER_COMPONENT, KafkaSpout.EVENT_ERROR_STREAM));
@@ -134,8 +127,7 @@ public class FpsSanctionsTopology extends AbstractTopology {
                 Arrays.asList(new GBolt[] {fpsProcessBolt,
                                          fpsReturnOriginalPaymentBolt, fpsValidateCustomerAccountBolt, fpsIdentifySanctionActionTypeBolt,
                                          fpsAccountingCommandBoltPass, fpsAccountingCommandBoltFail, eventAccountingCommandGeneratorBolt, kafkaAccountingCommandProducerBolt,
-//                							fpsValidationErrorHandlingBolt, kafkaValidationErrorEventProducerBolt,
-//                							fpsCreateReturnResponseBolt
+                							fpsCreateReturnResponseBolt, kafkaReturnProducerBolt,
                 							fpsErrorHandlingBolt, kafkaEventErrorProducer }));
 
         LOG.info("{} Topology created, submitting it to storm...", TOPOLOGY_NAME);

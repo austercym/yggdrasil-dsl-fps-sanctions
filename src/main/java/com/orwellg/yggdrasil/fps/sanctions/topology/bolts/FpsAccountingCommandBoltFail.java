@@ -62,12 +62,12 @@ public class FpsAccountingCommandBoltFail extends BasicRichBolt {
 
     @Override
     public void execute(Tuple tuple) {
-    	 	LOG.info("Getting ready for executing AccountingCommand Bolt. Tuple values: {}", tuple);
-    	 	FpsSanctionsTopologyConfig topologyConfig = FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig();
-    		FpsPaymentRequest data = (FpsPaymentRequest) tuple.getValueByField("eventData");
-    		FPSSanctionsAction sanctionAction = (FPSSanctionsAction) tuple.getValueByField("sanctionAction");
-    		FpsPaymentRequest fpsPaymentRequest = (FpsPaymentRequest) tuple.getValueByField("fpsPaymentRequest");
 
+        LOG.info("Getting ready for executing AccountingCommand Bolt. Tuple values: {}", tuple);
+        FpsSanctionsTopologyConfig topologyConfig = FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig();
+        FpsPaymentRequest data = (FpsPaymentRequest) tuple.getValueByField("eventData");
+        FPSSanctionsAction sanctionAction = (FPSSanctionsAction) tuple.getValueByField("sanctionAction");
+        FpsPaymentRequest fpsPaymentRequest = (FpsPaymentRequest) tuple.getValueByField("fpsPaymentRequest");
         String eventKey = tuple.getStringByField("key");
         String pmtId = tuple.getStringByField("processId");
         
@@ -84,27 +84,10 @@ public class FpsAccountingCommandBoltFail extends BasicRichBolt {
             });
 
             Node processorNode = getProcessorNode(fpsPaymentRequest.getCdtrAccountId());
-            String debitorAccountId = null;
-            String creditorAccountId = null;
-//            if (FPSDirection.INPUT.getDirection().equals(fpsPaymentRequest.getDirection())) {
-	            debitorAccountId = processorNode.getSpecialAccount(SpecialAccountTypes.SANCTIONS.getLiteral());;
-	            
-	            if (fpsPaymentRequest != null && fpsPaymentRequest.getCdtrAccountId() != null) {
-	            		creditorAccountId = fpsPaymentRequest.getCdtrAccountId();
-	            } else {
-	            		creditorAccountId = processorNode.getSpecialAccount(SpecialAccountTypes.EXCEPTIONS.getLiteral());
-	            }
-//            } else {
-//	            	//TODO: If direction is O: debitorAccountId = fpsPaymentRequest.getDbtrAccountId() and creditorAccountId = SpecialAccountTypes.EXCEPTIONS
-//	            if (fpsPaymentRequest != null && fpsPaymentRequest.getDbtrAccountId() != null) {
-//	            		debitorAccountId = fpsPaymentRequest.getDbtrAccountId();
-//	            } else {
-//	            		debitorAccountId = processorNode.getSpecialAccount(SpecialAccountTypes.EXCEPTIONS);
-//	            }
-//	            
-//	            creditorAccountId = processorNode.getSpecialAccount(SpecialAccountTypes.SANCTIONS);;
-//            }
-            
+
+            String debitorAccountId = processorNode.getSpecialAccount(SpecialAccountTypes.SANCTIONS.getLiteral());
+            String creditorAccountId = processorNode.getSpecialAccount(SpecialAccountTypes.FPS.getLiteral());
+
             LOG.info("[PmtId: {}] FPS Sanctions Account: {} ", pmtId, debitorAccountId);
 
             values.put("topic", processorNode.getTopic());
