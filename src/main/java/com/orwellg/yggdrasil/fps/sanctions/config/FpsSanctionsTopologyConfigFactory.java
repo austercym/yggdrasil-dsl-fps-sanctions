@@ -3,8 +3,8 @@ package com.orwellg.yggdrasil.fps.sanctions.config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.orwellg.yggdrasil.commons.config.topology.DSLTopologyConfig;
-import com.orwellg.yggdrasil.commons.config.topology.DSLTopologyConfigFactory;
+import com.orwellg.yggdrasil.commons.storm.topology.config.DSLTopologyConfigFactory;
+
 
 public class FpsSanctionsTopologyConfigFactory {
 	private final static Logger LOG = LogManager.getLogger(DSLTopologyConfigFactory.class);

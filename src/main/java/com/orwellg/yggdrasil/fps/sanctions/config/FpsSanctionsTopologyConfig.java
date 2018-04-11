@@ -1,7 +1,7 @@
 package com.orwellg.yggdrasil.fps.sanctions.config;
 
 import com.orwellg.umbrella.commons.beans.config.kafka.PublisherKafkaConfiguration;
-import com.orwellg.yggdrasil.commons.config.topology.DSLTopologyConfig;
+import com.orwellg.yggdrasil.commons.storm.topology.config.DSLTopologyConfig;
 
 public class FpsSanctionsTopologyConfig extends DSLTopologyConfig {
 	

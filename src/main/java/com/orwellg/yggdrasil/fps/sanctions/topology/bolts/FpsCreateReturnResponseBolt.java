@@ -6,9 +6,11 @@ import com.orwellg.umbrella.avro.types.event.EntityIdentifierType;
 import com.orwellg.umbrella.avro.types.event.Event;
 import com.orwellg.umbrella.avro.types.event.EventType;
 import com.orwellg.umbrella.avro.types.event.ProcessIdentifierType;
+import com.orwellg.umbrella.avro.types.payment.fps.FPSOutboundPayment;
 import com.orwellg.umbrella.avro.types.payment.fps.FPSOutboundPaymentResponse;
 import com.orwellg.umbrella.avro.types.payment.fps.FPSSanctionsAction;
 import com.orwellg.umbrella.commons.storm.topology.component.bolt.BasicRichBolt;
+import com.orwellg.umbrella.commons.types.fps.PaymentType;
 import com.orwellg.umbrella.commons.types.utils.avro.RawMessageUtils;
 import com.orwellg.umbrella.commons.utils.constants.Constants;
 import com.orwellg.umbrella.commons.utils.enums.FPSEvents;
@@ -19,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.storm.tuple.Tuple;
 
 import java.text.SimpleDateFormat;
+import java.time.ZoneOffset;
 import java.util.*;
 
 
@@ -37,8 +40,8 @@ public class FpsCreateReturnResponseBolt extends BasicRichBolt {
 
     @Override
     public void declareFieldsDefinition() {
-        addFielsDefinition(Arrays.asList(new String[] {"key", "processId", "eventData"}));
-        addFielsDefinition(FPS_KAFKA_RETURN_RESPONSE_STREAM,Arrays.asList(new String[] {"key", "topic", "message"}));
+        //addFielsDefinition(Arrays.asList(new String[] {"key", "processId", "eventData"}));
+        addFielsDefinition(Arrays.asList(new String[] {"key", "topic", "message"}));
     }
 
     @Override
@@ -51,16 +54,12 @@ public class FpsCreateReturnResponseBolt extends BasicRichBolt {
 
         sendResponseToKafka(input,pmtId,eventKey,fpsPaymentRequest);
 
-        Map<String, Object> values = new HashMap<>();
-        values.put("key", pmtId);
-        values.put("processId", pmtId);
-        values.put("eventData", fpsPaymentRequest);
 
-        send(input, values);
+
     }
 
     private void sendResponseToKafka(Tuple input,String pmtId,String eventKey,FpsPaymentRequest fpsSanctionsAction){
-        FPSOutboundPaymentResponse message=null;
+        FPSOutboundPayment message=null;
         
         Map<String, Object> values = new HashMap<>();
 
@@ -68,6 +67,18 @@ public class FpsCreateReturnResponseBolt extends BasicRichBolt {
         values.put("topic", FPS_SANCTIONS_RETURN_RESPONSE);
         String base64Event;
         try {
+            message.setCdtrAccountId(fpsSanctionsAction.getCdtrAccountId());
+            message.setDbtrAccountId(fpsSanctionsAction.getDbtrAccountId());
+            message.setFPID(fpsSanctionsAction.getFPID());
+            message.setPaymentDocument(fpsSanctionsAction.getDocument());
+            message.setPaymentId(fpsSanctionsAction.getPaymentId());
+            message.setPaymentTimestamp(fpsSanctionsAction.getRequestTimeStamp().toInstant(ZoneOffset.UTC).toEpochMilli());
+            message.setPaymentType(PaymentType.PaymentTypeCode.RTN.name());
+            message.setReturnCode(null);
+            message.setReturnedPaymentId(null);
+            message.setStsRsn(RETURN_CODE);
+            message.setTxSts(RETURN_TXSTS);
+
             String serializedData = new Gson().toJson(fpsSanctionsAction);
             Event event = generateEvent(eventKey, pmtId, FPSEvents.FPS_SANCTION_RECEIVED.getEventName(), serializedData);
             base64Event = RawMessageUtils.encodeToString(Event.SCHEMA$, event);
@@ -78,8 +89,8 @@ public class FpsCreateReturnResponseBolt extends BasicRichBolt {
 
         LOG.info("[PmtId: {}] Sending return payment inbound to topic: {} ", pmtId, FPS_SANCTIONS_RETURN_RESPONSE);
         values.put("message",base64Event);
-
-        send(FPS_KAFKA_RETURN_RESPONSE_STREAM,input, values);
+        send(input, values);
+    //    send(FPS_KAFKA_RETURN_RESPONSE_STREAM,input, values);
     }
 
     private Event generateEvent(String parentKey, String processId, String eventName, String serializedData) {
