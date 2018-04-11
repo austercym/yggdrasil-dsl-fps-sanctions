@@ -431,5 +431,14 @@
 				<skip.unit.tests>true</skip.unit.tests>
 			</properties>
 		</profile>
+		
+		 <!-- AWS-PRO-->       
+		<profile>
+		    <id>aws-pro</id>
+		    <properties>
+			<zookeeper.host>hdf-g1-0.node.consul:2181,hdf-g1-1.node.consul:2181,hdf-g1-2.node.consul:2181</zookeeper.host>
+			<storm.scope>provided</storm.scope>
+		    </properties>
+		</profile>
 	</profiles>
 </project>
