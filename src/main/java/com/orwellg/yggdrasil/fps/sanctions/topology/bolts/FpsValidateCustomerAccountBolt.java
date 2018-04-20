@@ -16,6 +16,7 @@ import org.apache.storm.tuple.Tuple;
 
 import com.google.gson.Gson;
 import com.orwellg.umbrella.avro.types.payment.fps.FPSSanctionsAction;
+import com.orwellg.umbrella.commons.config.params.ScyllaParams;
 import com.orwellg.umbrella.commons.repositories.scylla.InternalAccountRepository;
 import com.orwellg.umbrella.commons.repositories.scylla.ProductRepository;
 import com.orwellg.umbrella.commons.repositories.scylla.impl.InternalAccountRepositoryImpl;
@@ -49,25 +50,19 @@ public class FpsValidateCustomerAccountBolt extends BasicRichBolt {
     private ProductRepository productRepository;
     private InternalAccountRepository internalAccountRepository;
     
-    private String scyllaNodes;
+    private ScyllaParams topologyScyllaParams;
     private String scyllaKeyspace;
-    public String getScyllaNodes() { return scyllaNodes; }
-    public String getScyllaKeyspace() { return scyllaKeyspace; }
-    public void setScyllaNodes(String scyllaNodes) {	this.scyllaNodes = scyllaNodes; }
-    public void setScyllaKeyspace(String scyllaKeyspace) { this.scyllaKeyspace = scyllaKeyspace; }
-
-    protected void setScyllaConnectionParameters() {
-        setScyllaNodes(FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig().getScyllaConfig().getScyllaParams().getNodeList());
-        setScyllaKeyspace(FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig().getScyllaConfig().getScyllaParams().getKeyspace());
-    }
 
     @SuppressWarnings("rawtypes")
 	@Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         super.prepare(stormConf, context, collector);
-        setScyllaConnectionParameters();
-        internalAccountRepository = new InternalAccountRepositoryImpl(getScyllaNodes(), getScyllaKeyspace());
-        productRepository = new ProductRepositoryImpl(getScyllaNodes(), getScyllaKeyspace());
+
+        topologyScyllaParams = FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig().getScyllaConfig().getScyllaParams();
+        scyllaKeyspace = FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig().getScyllaConfig().getScyllaParams().getKeyspace();
+        		
+        internalAccountRepository = new InternalAccountRepositoryImpl(topologyScyllaParams, scyllaKeyspace);
+        productRepository = new ProductRepositoryImpl(topologyScyllaParams, scyllaKeyspace);
     }
 
     @Override

@@ -10,129 +10,19 @@
 	<name>yggdrasil-dsl-fps-sanctions</name>
 	<url>http://maven.apache.org</url>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	<parent>
+		<groupId>com.orwellg.yggdrasil</groupId>
+		<artifactId>super-pom-read</artifactId>
+		<version>0.0.4-SNAPSHOT</version>
+		<relativePath></relativePath>
+	</parent>
 
-        <casandra.version>3.3.0</casandra.version>
-        
-        <umbrella.commons.version>0.0.7-SNAPSHOT</umbrella.commons.version>
-		<umbrella.types.version>0.0.4</umbrella.types.version>
-		<umbrella.storm.version>0.0.6-SNAPSHOT</umbrella.storm.version>
-		
-		<yggdrasil.version>0.0.4-SNAPSHOT</yggdrasil.version>
-		<yggdrasil.storm.version>0.0.2-SNAPSHOT</yggdrasil.storm.version>
-		
-		<storm.version>1.1.0</storm.version>
-		<kafka.clients.version>1.0.0</kafka.clients.version>
-		<commons.lang3.version>3.5</commons.lang3.version>
-		<gson.google.version>2.8.1</gson.google.version>
-		<org.apache.codec.version>1.10</org.apache.codec.version>
-
-		<junit.version>4.12</junit.version>
-		<commons.io.version>2.5</commons.io.version>
-
-		<storm.topology>com.orwellg.yggdrasil.fps.sanctions.topology.FpsSanctionsTopology</storm.topology>
-	</properties>
-	
 	<dependencies>
-		<dependency>
-			<groupId>org.apache.storm</groupId>
-			<artifactId>storm-core</artifactId>
-			<version>${storm.version}</version>
-			<scope>${storm.scope}</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.logging.log4j</groupId>
-					<artifactId>log4j-slf4j-impl</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>log4j-over-slf4j</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.storm</groupId>
-			<artifactId>storm-kafka-client</artifactId>
-			<version>${storm.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.apache.kafka</groupId>
-			<artifactId>kafka-clients</artifactId>
-			<version>${kafka.clients.version}</version>
-		</dependency>
 
-
-		<!-- UMBRELLA COMMONS dependencies -->
-		<dependency>
-			<groupId>com.orwellg.umbrella</groupId>
-			<artifactId>umbrella-commons</artifactId>
-			<version>${umbrella.commons.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.orwellg.umbrella</groupId>
-			<artifactId>umbrella-commons-types</artifactId>
-			<version>${umbrella.types.version}</version>
-		</dependency>
-		
-		<!-- UMBRELLA STORM dependencies -->
-		<dependency>
-			<groupId>com.orwellg.umbrella</groupId>
-			<artifactId>umbrella-commons-storm</artifactId>
-			<version>${umbrella.storm.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>log4j-over-slf4j</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		
-		<dependency>
-		    <groupId>com.orwellg.umbrella</groupId>
-		    <artifactId>umbrella-commons-nosql</artifactId>
-		    <version>0.0.3-SNAPSHOT</version>
-		</dependency>
-
-		<!-- YGGDRASIL COMMONS dependencies -->
-		<dependency>
-			<groupId>com.orwellg.yggdrasil</groupId>
-			<artifactId>yggdrasil-commons</artifactId>
-			<version>${yggdrasil.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		
 		<dependency>
 		    <groupId>com.orwellg.yggdrasil</groupId>
 		    <artifactId>yggdrasil-commons-storm</artifactId>
-		    <version>${yggdrasil.storm.version}</version>
+		    <version>0.0.2</version>
 		    <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -162,211 +52,51 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
-            </exclusions>
+                <exclusion>
+                	<groupId>com.orwellg.yggdrasil</groupId>
+                	<artifactId>yggdrasil-network-client</artifactId>
+                </exclusion>
+		    </exclusions>
 		</dependency>
-		
-        <dependency>
-			<groupId>com.datastax.cassandra</groupId>
-			<artifactId>cassandra-driver-core</artifactId>
-			<version>${casandra.version}</version>
+
+		<dependency>
+			<groupId>com.orwellg.umbrella</groupId>
+			<artifactId>umbrella-commons-nosql</artifactId>
+			<version>${umbrella.nosql.version}</version>
 			<exclusions>
 				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
-
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>${org.apache.codec.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>${commons.lang3.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>${gson.google.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- Used by some UniqueIDGenerator tests -->
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>${commons.io.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- Launch docker as @Rule in integration tests -->
 		<dependency>
 			<groupId>com.palantir.docker.compose</groupId>
 			<artifactId>docker-compose-rule-junit4</artifactId>
 			<version>0.32.0</version>
-			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-		<!-- Launch zookeeper server in tests -->
 		<dependency>
-		    <groupId>org.dmonix.junit</groupId>
-		    <artifactId>zookeeper-junit</artifactId>
-		    <version>1.2</version>
-			<scope>test</scope>
+			<groupId>com.orwellg.umbrella</groupId>
+			<artifactId>umbrella-commons</artifactId>
+			<version>${umbrella.commons.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
-
-	<repositories>
-		<repository>
-			<id>com.palantir</id>
-			<url>https://dl.bintray.com/palantir/releases</url>
-		</repository>
-	</repositories>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.1.0</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<executable>java</executable>
-					<includeProjectDependencies>true</includeProjectDependencies>
-					<includePluginDependencies>false</includePluginDependencies>
-					<classpathScope>compile</classpathScope>
-					<mainClass>${storm.topology}</mainClass>
-				</configuration>
-			</plugin>
-			<!-- Enabling and configuring regular resources filtering. See also section
-				"resources" below -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<!-- specify UTF-8, ISO-8859-1 or any other file encoding -->
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
-			<!-- Enable multiple src and resources directories -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.9.1</version>
-				<executions>
-					<!-- Add a new source directory to our build -->
-					<execution>
-						<id>add-integration-test-sources</id>
-						<phase>generate-test-sources</phase>
-						<goals>
-							<goal>add-test-source</goal>
-						</goals>
-						<configuration>
-							<!-- Configures the source directory of our integration tests -->
-							<sources>
-								<source>src/integration-test/java</source>
-							</sources>
-						</configuration>
-					</execution>
-					<!-- Add a new resource directory to our build -->
-					<execution>
-						<id>add-integration-test-resources</id>
-						<phase>generate-test-resources</phase>
-						<goals>
-							<goal>add-test-resource</goal>
-						</goals>
-						<configuration>
-							<!-- Configures the resource directory of our integration tests -->
-							<resources>
-								<!-- Placeholders that are found from the files located in the configured
-									resource directories are replaced with the property values found from the
-									profile specific configuration file. -->
-								<resource>
-									<filtering>true</filtering>
-									<directory>src/integration-test/resources</directory>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- Runs unit tests -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.18</version>
-				<configuration>
-					<!-- Skips unit tests if the value of skip.unit.tests property is true -->
-					<skipTests>${skip.unit.tests}</skipTests>
-					<!-- Excludes integration tests when unit tests are run -->
-					<excludes>
-						<exclude>**/*IT.java</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-			<!-- Runs integration tests -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.18</version>
-				<executions>
-					<!-- Invokes both the integration-test and the verify goals of the Failsafe
-						Maven plugin -->
-					<execution>
-						<id>integration-tests</id>
-						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
-						</goals>
-						<configuration>
-							<!-- Skips integration tests if the value of skip.integration.tests
-								property is true -->
-							<skipTests>${skip.integration.tests}</skipTests>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-
-		<!-- Instructing the resources plugin to filter certain directories -->
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
-	</build>
 
 	<profiles>
 		<!-- Development environment @ my laptop -->
