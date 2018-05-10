@@ -132,7 +132,7 @@ public class FpsAccountingCommandBoltPass extends BasicRichBolt {
 
         commandData.getAccountingInfo().setDebitAccount(debitAccountInfo);
         commandData.getAccountingInfo().setCreditAccount(creditAccountInfo);
-        commandData.getAccountingInfo().setDebitBalanceUpdate(BalanceUpdateType.NONE);
+        commandData.getAccountingInfo().setDebitBalanceUpdate(BalanceUpdateType.ALL);
         commandData.getAccountingInfo().setCreditBalanceUpdate(BalanceUpdateType.ALL);
         Decimal amountDec = new Decimal();
         amountDec.setValue(fpsPaymentRequest.getTransactionAmount());

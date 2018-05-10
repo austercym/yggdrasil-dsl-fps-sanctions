@@ -3,7 +3,6 @@ package com.orwellg.yggdrasil.fps.sanctions.topology.bolts;
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
-import com.google.common.io.Resources;
 import com.google.gson.Gson;
 import com.orwellg.umbrella.avro.types.event.EntityIdentifierType;
 import com.orwellg.umbrella.avro.types.event.Event;
