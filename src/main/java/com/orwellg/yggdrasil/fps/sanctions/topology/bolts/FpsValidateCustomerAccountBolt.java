@@ -29,6 +29,7 @@ import com.orwellg.umbrella.commons.types.scylla.entities.InternalAccount;
 import com.orwellg.umbrella.commons.types.scylla.entities.Product;
 import com.orwellg.umbrella.commons.types.scylla.entities.SortCodeAccount;
 import com.orwellg.umbrella.commons.utils.enums.ProductStatus;
+import com.orwellg.yggdrasil.commons.utils.constants.Constants;
 import com.orwellg.yggdrasil.fps.sanctions.config.FpsSanctionsTopologyConfigFactory;
 import com.orwellg.yggdrasil.fps.sanctions.exception.CustomerAccountDataException;
 import com.orwellg.yggdrasil.fps.sanctions.exception.IBANNotFoundException;
@@ -52,14 +53,17 @@ public class FpsValidateCustomerAccountBolt extends BasicRichBolt {
     
     private ScyllaParams topologyScyllaParams;
     private String scyllaKeyspace;
+    private String zookeeperHost;
 
     @SuppressWarnings("rawtypes")
 	@Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         super.prepare(stormConf, context, collector);
 
-        topologyScyllaParams = FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig().getScyllaConfig().getScyllaParams();
-        scyllaKeyspace = FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig().getScyllaConfig().getScyllaParams().getKeyspace();
+        zookeeperHost = (String) stormConf.get(Constants.ZK_HOST_LIST_PROPERTY);
+        
+        topologyScyllaParams = FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig(zookeeperHost).getScyllaConfig().getScyllaParams();
+        scyllaKeyspace = FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig(zookeeperHost).getScyllaConfig().getScyllaParams().getKeyspace();
         		
         internalAccountRepository = new InternalAccountRepositoryImpl(topologyScyllaParams, scyllaKeyspace);
         productRepository = new ProductRepositoryImpl(topologyScyllaParams, scyllaKeyspace);

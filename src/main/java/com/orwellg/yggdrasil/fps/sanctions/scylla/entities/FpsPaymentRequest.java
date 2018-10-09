@@ -3,7 +3,6 @@ package com.orwellg.yggdrasil.fps.sanctions.scylla.entities;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import com.orwellg.umbrella.avro.types.payment.iso20022.pacs.pacs008_001_05.Document;

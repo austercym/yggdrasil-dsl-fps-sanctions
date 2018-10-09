@@ -6,6 +6,7 @@ import com.orwellg.umbrella.avro.types.payment.fps.FPSSanctionsAction;
 import com.orwellg.umbrella.commons.config.params.ScyllaParams;
 import com.orwellg.umbrella.commons.storm.topology.component.bolt.BasicRichBolt;
 import com.orwellg.umbrella.commons.utils.scylla.ScyllaManager;
+import com.orwellg.yggdrasil.commons.utils.constants.Constants;
 import com.orwellg.yggdrasil.fps.sanctions.config.FpsSanctionsTopologyConfigFactory;
 import com.orwellg.yggdrasil.fps.sanctions.exception.FPSPaymentRequestNotFoundException;
 import com.orwellg.yggdrasil.fps.sanctions.scylla.FpsPaymentRequestNoSqlDao;
@@ -28,6 +29,8 @@ public class FpsOriginalPaymentBolt extends BasicRichBolt {
     private static final long serialVersionUID = 1L;
 
     private static final String FPS_ERROR_RETURN_STREAM = "fpsErrorReturnStream";
+    
+    private String zookeeperHost;
     private FpsPaymentRequestNoSqlDao fpsPaymentRequestNoSqlDao;
 
 
@@ -35,8 +38,8 @@ public class FpsOriginalPaymentBolt extends BasicRichBolt {
 	@Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         super.prepare(stormConf, context, collector);
-
-        ScyllaParams topologyScyllaParams = FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig().getScyllaConfig().getScyllaParams();
+        zookeeperHost = (String) stormConf.get(Constants.ZK_HOST_LIST_PROPERTY);
+        ScyllaParams topologyScyllaParams = FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig(zookeeperHost).getScyllaConfig().getScyllaParams();
         ScyllaManager man = ScyllaManager.getInstance(topologyScyllaParams);
         fpsPaymentRequestNoSqlDao = new FpsPaymentRequestNoSqlDao(man,topologyScyllaParams.getKeyspace());
     }

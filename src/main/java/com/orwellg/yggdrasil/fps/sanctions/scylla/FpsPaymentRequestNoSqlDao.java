@@ -1,17 +1,14 @@
 package com.orwellg.yggdrasil.fps.sanctions.scylla;
 
-import com.datastax.driver.core.*;
+import com.datastax.driver.core.BoundStatement;
+import com.datastax.driver.core.PreparedStatement;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
 import com.google.gson.Gson;
 import com.orwellg.umbrella.avro.types.payment.iso20022.pacs.pacs008_001_05.Document;
-import com.orwellg.umbrella.commons.types.fps.PaymentStatus;
 import com.orwellg.umbrella.commons.utils.scylla.ScyllaManager;
 import com.orwellg.yggdrasil.fps.sanctions.scylla.entities.FpsPaymentRequest;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 
 public class FpsPaymentRequestNoSqlDao {

@@ -1,6 +1,11 @@
 package com.orwellg.yggdrasil.fps.sanctions.topology.bolts;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -25,14 +30,13 @@ import com.orwellg.umbrella.commons.utils.enums.AccountingTagsTypes;
 import com.orwellg.umbrella.commons.utils.enums.CommandTypes;
 import com.orwellg.umbrella.commons.utils.enums.KafkaHeaders;
 import com.orwellg.umbrella.commons.utils.enums.TransactionEvents;
-import com.orwellg.umbrella.commons.utils.enums.fps.FPSDirection;
 import com.orwellg.yggdrasil.commons.factories.ClusterFactory;
 import com.orwellg.yggdrasil.commons.net.Cluster;
 import com.orwellg.yggdrasil.commons.net.Node;
+import com.orwellg.yggdrasil.commons.utils.constants.Constants;
 import com.orwellg.yggdrasil.commons.utils.enums.SpecialAccountTypes;
 import com.orwellg.yggdrasil.fps.sanctions.config.FpsSanctionsTopologyConfig;
 import com.orwellg.yggdrasil.fps.sanctions.config.FpsSanctionsTopologyConfigFactory;
-import com.orwellg.yggdrasil.fps.sanctions.messages.FpsInboundMessage;
 import com.orwellg.yggdrasil.fps.sanctions.scylla.entities.FpsPaymentRequest;
 
 
@@ -42,15 +46,15 @@ public class FpsAccountingCommandBoltPass extends BasicRichBolt {
 
 	public final static Logger LOG = LogManager.getLogger(FpsAccountingCommandBoltPass.class);
 
-
+	private String zookeeperHost;
     private Cluster processorCluster;
 
-    
     @SuppressWarnings("rawtypes")
 	@Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
     	super.prepare(stormConf, context, collector);
-    	processorCluster = ClusterFactory.createCluster(FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig().getNetworkConfig());
+    	zookeeperHost = (String) stormConf.get(Constants.ZK_HOST_LIST_PROPERTY); 
+    	processorCluster = ClusterFactory.createCluster(FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig(zookeeperHost).getNetworkConfig());
     }
     
     
@@ -62,11 +66,11 @@ public class FpsAccountingCommandBoltPass extends BasicRichBolt {
 
     @Override
     public void execute(Tuple tuple) {
-    	 	LOG.info("Getting ready for executing AccountingCommand Bolt. Tuple values: {}", tuple);
-    	 	FpsSanctionsTopologyConfig topologyConfig = FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig();
-    		FpsPaymentRequest data = (FpsPaymentRequest) tuple.getValueByField("eventData");
-    		FPSSanctionsAction sanctionAction = (FPSSanctionsAction) tuple.getValueByField("sanctionAction");
-    		FpsPaymentRequest fpsPaymentRequest = (FpsPaymentRequest) tuple.getValueByField("fpsPaymentRequest");
+	 	LOG.info("Getting ready for executing AccountingCommand Bolt. Tuple values: {}", tuple);
+	 	FpsSanctionsTopologyConfig topologyConfig = FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig(zookeeperHost);
+		FpsPaymentRequest data = (FpsPaymentRequest) tuple.getValueByField("eventData");
+		FPSSanctionsAction sanctionAction = (FPSSanctionsAction) tuple.getValueByField("sanctionAction");
+		FpsPaymentRequest fpsPaymentRequest = (FpsPaymentRequest) tuple.getValueByField("fpsPaymentRequest");
 
         String eventKey = tuple.getStringByField("key");
         String pmtId = tuple.getStringByField("processId");
@@ -101,7 +105,7 @@ public class FpsAccountingCommandBoltPass extends BasicRichBolt {
             values.put("key", pmtId);
             values.put("processId", pmtId);
             values.put("eventName", TransactionEvents.FPS_POO_PAYMENT_SANCTION_PASSED.getEventName());
-            values.put("headers", addHeaderValue(tuple, KafkaHeaders.REPLY_TO.getKafkaHeader(), topologyConfig.getTopologyPropertyValue(FpsSanctionsTopologyConfig.PROPERTY_TOPIC_ACCTNG_RESPONSE).getBytes()));
+            values.put("headers", addHeaderValue(tuple.getStringByField("headers"), KafkaHeaders.REPLY_TO.getKafkaHeader(), topologyConfig.getTopologyPropertyValue(FpsSanctionsTopologyConfig.PROPERTY_TOPIC_ACCTNG_RESPONSE).getBytes()));
             values.put("commandName", CommandTypes.ACCOUNTING_COMMAND_RECEIVED.getCommandName());
             values.put("eventData", data);
 
@@ -180,7 +184,7 @@ public class FpsAccountingCommandBoltPass extends BasicRichBolt {
         if (!internalAccountId.equals(StringUtils.EMPTY)) {
             processorNode=processorCluster.nodeByAccount(internalAccountId);
         }else {
-            Map nodes = processorCluster.getNodes();
+            Map<Integer, Node> nodes = processorCluster.getNodes();
             List<Node> listNodes = new ArrayList<Node>(nodes.values());
             Integer randomNode = 0 + new Random().nextInt((listNodes.size() - 0) + 1);
             LOG.info("get random proccesor Node for exception processing {}",randomNode);
