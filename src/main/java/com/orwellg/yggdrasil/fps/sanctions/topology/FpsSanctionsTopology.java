@@ -33,25 +33,25 @@ public class FpsSanctionsTopology extends AbstractTopology {
 
 	private final static Logger LOG = LogManager.getLogger(FpsSanctionsTopology.class);
 
-    private static final String TOPOLOGY_NAME = "dsl-fps-sanctions";
+    private static final String TOPOLOGY_NAME = "yggdrasil-dsl-fps-sanctions";
     private static final String KAFKA_EVENT_READER_COMPONENT = "com.orwellg.yggdrasil.dsl.fps.sanctions.response.1";
     
     private static final String FPS_PROCESS_COMPONENT = "fpsProcessEventPayment";
 
     private static final String FPS_IDENTIFY_SANCTIONACTION_COMPONENT = "fpsIdentifySanctionAction";
     
-    private static final String FPS_VALIDATE_SCHEME_COMPONENT = "fpsValidateScheme";
+    // private static final String FPS_VALIDATE_SCHEME_COMPONENT = "fpsValidateScheme";
     private static final String FPS_VALIDATE_CUSTOMER_ACCOUNT_COMPONENT = "fpsValidateCustomerAccount";
     private static final String FPS_ACCOUNTING_COMMAND_COMPONENT_PASS = "fpsAccountingCommandPass";
     private static final String FPS_ACCOUNTING_COMMAND_COMPONENT_FAIL = "fpsAccountingCommandFail";
     private static final String FPS_ACCOUNTING_KAFKA_COMMAND_COMPONENT = "fpsAccountingKafkaCommand";
     private static final String FPS_ACCOUNTING_PUBLISH_COMMAND_COMPONENT = "fpsAccountingPublishCommand";
-    private static final String FPS_VALIDATION_ERROR_HANDLING = "fpsValidationErrorHandling";
+    // private static final String FPS_VALIDATION_ERROR_HANDLING = "fpsValidationErrorHandling";
     private static final String FPS_VALIDATION_ERROR_PRODUCER_COMPONENT = "fpsValidationErrorProducer";
     private static final String FPS_RETURN_ORIGINAL_BOLT = "fpsReturnOriginalBolt";
     
     private static final String FPS_CREATE_RETURN_RESPONSE_COMPONENT = "fpsCreateReturnResponse";
-    private static final String FPS_PRODUCE_RETURN_RESPONSE_COMPONENT = "fpsProduceCreateReturnResponse";
+    // private static final String FPS_PRODUCE_RETURN_RESPONSE_COMPONENT = "fpsProduceCreateReturnResponse";
 
     private static final String FPS_ERROR_HANDLING = "fpsErrorHandling";
     private static final String FPS_ERROR_PRODUCER_COMPONENT = "fpsErrorProducer";
@@ -64,10 +64,15 @@ public class FpsSanctionsTopology extends AbstractTopology {
     public static final String FPS_SANCTION_ACTION_FAIL_STREAM              = "SANCTIONACTION_FAIL_STREAM";
     public static final String FPS_SANCTION_FAIL_RETURN_STREAM              = "SANCTION_FAIL_RETURN_STREAM";
 
-	@Override
+    @Override
 	public StormTopology load() {
+    	return load(null);
+    }
+    
+	@Override
+	public StormTopology load(String zookeeperHost) {
         // Read configuration params from topology.properties and zookeeper
-        FpsSanctionsTopologyConfig config = FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig();
+        FpsSanctionsTopologyConfig config = FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig(zookeeperHost);
 
         // Create the spout that read the events from Kafka
         GSpout kafkaEventReader = new GSpout(KAFKA_EVENT_READER_COMPONENT, new KafkaSpoutWrapper(config.getKafkaSubscriberSpoutConfig(), String.class, String.class).getKafkaSpout(), config.getKafkaSpoutHints());

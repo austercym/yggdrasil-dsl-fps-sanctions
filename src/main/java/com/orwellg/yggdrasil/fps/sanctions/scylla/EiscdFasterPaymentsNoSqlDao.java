@@ -1,19 +1,17 @@
 package com.orwellg.yggdrasil.fps.sanctions.scylla;
 
-import com.datastax.driver.core.*;
+import com.datastax.driver.core.BoundStatement;
+import com.datastax.driver.core.PreparedStatement;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
 import com.orwellg.umbrella.commons.config.params.ScyllaParams;
 import com.orwellg.umbrella.commons.storm.config.topology.TopologyConfigFactory;
 import com.orwellg.umbrella.commons.types.fps.PaymentStatus;
 import com.orwellg.umbrella.commons.utils.scylla.ScyllaManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.List;
 
 
 public class EiscdFasterPaymentsNoSqlDao {
-
-	private final static Logger LOG = LogManager.getLogger(EiscdFasterPaymentsNoSqlDao.class);
 
 	protected ScyllaManager man;
 

@@ -11,7 +11,7 @@ public class FpsSanctionsTopologyConfigFactory {
 
 	protected static FpsSanctionsTopologyConfig dslTopologyConfig;
 	
-	protected static synchronized void initDSLTopologyConfig(String propertiesFile) {
+	protected static synchronized void initDSLTopologyConfig(String propertiesFile, String zookeeperHost) {
 		
 		if (dslTopologyConfig == null) {
 			if (propertiesFile != null) {
@@ -22,7 +22,7 @@ public class FpsSanctionsTopologyConfigFactory {
 				dslTopologyConfig = new FpsSanctionsTopologyConfig();
 			}
 			try {
-				dslTopologyConfig.start();
+				dslTopologyConfig.start(zookeeperHost);
 			} catch (Exception e) {
 				LOG.error("Topology configuration params cannot be started. The system will work with default parameters. Message: {}",  e.getMessage(),  e);
 			}
@@ -35,8 +35,8 @@ public class FpsSanctionsTopologyConfigFactory {
 	 * @return TopologyConfig initialized with propertiesFile (a properties file with at least "zookeeper.host" property).
 	 * @see DSLTopologyConfig
 	 */
-	public static synchronized FpsSanctionsTopologyConfig getDSLTopologyConfig(String propertiesFile) {
-		initDSLTopologyConfig(propertiesFile);
+	public static synchronized FpsSanctionsTopologyConfig getDSLTopologyConfig(String propertiesFile, String zookeeperHost) {
+		initDSLTopologyConfig(propertiesFile, zookeeperHost);
 		return dslTopologyConfig;
 	}
 
@@ -46,8 +46,8 @@ public class FpsSanctionsTopologyConfigFactory {
 	 * @return TopologyConfig initialized with TopologyConfig.DEFAULT_PROPERTIES_FILE (a properties file with at least "zookeeper.host" property).
 	 * @see DSLTopologyConfig
 	 */
-	public static synchronized FpsSanctionsTopologyConfig getDSLTopologyConfig() {
-		initDSLTopologyConfig(null);
+	public static synchronized FpsSanctionsTopologyConfig getDSLTopologyConfig(String zookeeperHost) {
+		initDSLTopologyConfig(null, zookeeperHost);
 		return dslTopologyConfig;
 	}
 	
