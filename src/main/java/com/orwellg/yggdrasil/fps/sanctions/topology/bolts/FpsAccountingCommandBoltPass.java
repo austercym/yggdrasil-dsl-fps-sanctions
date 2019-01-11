@@ -32,6 +32,8 @@ import com.orwellg.umbrella.commons.utils.enums.KafkaHeaders;
 import com.orwellg.umbrella.commons.utils.enums.Systems;
 import com.orwellg.umbrella.commons.utils.enums.TransactionEvents;
 import com.orwellg.yggdrasil.commons.factories.ClusterFactory;
+import com.orwellg.yggdrasil.commons.fps.storm.config.FpsDSLTopologyConfig;
+import com.orwellg.yggdrasil.commons.fps.storm.config.FpsDSLTopologyConfigFactory;
 import com.orwellg.yggdrasil.commons.net.Cluster;
 import com.orwellg.yggdrasil.commons.net.Node;
 import com.orwellg.yggdrasil.commons.utils.constants.Constants;
@@ -69,6 +71,7 @@ public class FpsAccountingCommandBoltPass extends BasicRichBolt {
     public void execute(Tuple tuple) {
 	 	LOG.info("Getting ready for executing AccountingCommand Bolt. Tuple values: {}", tuple);
 	 	FpsSanctionsTopologyConfig topologyConfig = FpsSanctionsTopologyConfigFactory.getDSLTopologyConfig(zookeeperHost);
+	 	FpsDSLTopologyConfig fpsConfig = FpsDSLTopologyConfigFactory.getFpsDSLTopologyConfig(zookeeperHost);
 		FpsPaymentRequest data = (FpsPaymentRequest) tuple.getValueByField("eventData");
 		FPSSanctionsAction sanctionAction = (FPSSanctionsAction) tuple.getValueByField("sanctionAction");
 		FpsPaymentRequest fpsPaymentRequest = (FpsPaymentRequest) tuple.getValueByField("fpsPaymentRequest");
@@ -96,7 +99,12 @@ public class FpsAccountingCommandBoltPass extends BasicRichBolt {
             if (fpsPaymentRequest != null && fpsPaymentRequest.getCdtrAccountId() != null) {
                     creditorAccountId = fpsPaymentRequest.getCdtrAccountId();
             } else {
-                    creditorAccountId = processorNode.getSpecialAccount(SpecialAccountTypes.EXCEPTIONS.getLiteral());
+            		processorNode = getProcessorNode(fpsConfig.getFpsConfig().getExceptionAccountId());
+            		creditorAccountId = processorNode.getSpecialAccount(SpecialAccountTypes.EXCEPTIONS.getLiteral());
+	                LOG.info("[PmtId: {}] Special Account for exceptions: {} ", pmtId, creditorAccountId);
+	                if (creditorAccountId==null){
+	                    throw new Exception("FPS Exceptions Account Id not configured. Review FPS Topologies configuration parameters.");
+	                }
             }
 
             
