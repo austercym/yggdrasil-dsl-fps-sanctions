@@ -91,16 +91,18 @@ public class FpsAccountingCommandBoltPass extends BasicRichBolt {
                 LOG.info("[Processor Cluster] Num Node: {} - Range: [{}-{}]", numNode, node.getInitialAccountRange(), node.getFinalAccountRange());
             });
 
-            Node processorNode = getProcessorNode(fpsPaymentRequest.getCdtrAccountId());
+            Node processorNode = null;
             String debitorAccountId = null;
             String creditorAccountId = null;
-            debitorAccountId = processorNode.getSpecialAccount(SpecialAccountTypes.SANCTIONS.getLiteral());;
+            
 
             if (fpsPaymentRequest != null && fpsPaymentRequest.getCdtrAccountId() != null) {
+            	processorNode = getProcessorNode(fpsPaymentRequest.getCdtrAccountId());
+                    debitorAccountId = processorNode.getSpecialAccount(SpecialAccountTypes.SANCTIONS.getLiteral());;
                     creditorAccountId = fpsPaymentRequest.getCdtrAccountId();
             } else {
-            		processorNode = getProcessorNode(fpsConfig.getFpsConfig().getExceptionAccountId());
-            		creditorAccountId = processorNode.getSpecialAccount(SpecialAccountTypes.EXCEPTIONS.getLiteral());
+            		creditorAccountId = fpsConfig.getFpsConfig().getExceptionAccountId();
+            		processorNode = getProcessorNode(creditorAccountId);
 	                LOG.info("[PmtId: {}] Special Account for exceptions: {} ", pmtId, creditorAccountId);
 	                if (creditorAccountId==null){
 	                    throw new Exception("FPS Exceptions Account Id not configured. Review FPS Topologies configuration parameters.");
