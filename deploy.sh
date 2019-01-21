@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-FILE=yggdrasil-dsl-fps-sanctions-0.1.2-SNAPSHOT.jar
+FILE=yggdrasil-dsl-fps-sanctions-19.01.15-SNAPSHOT.jar
 TOPOLOGY=yggdrasil-dsl-fps-sanctions
 MAIN=com.orwellg.yggdrasil.fps.sanctions.topology.FpsSanctions
 
