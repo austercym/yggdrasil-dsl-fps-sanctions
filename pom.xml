@@ -4,7 +4,7 @@
 
 	<groupId>com.orwellg</groupId>
 	<artifactId>yggdrasil-dsl-fps-sanctions</artifactId>
-	<version>19.01.15-SNAPSHOT</version>
+	<version>19.01.24</version>
 	<packaging>jar</packaging>
 
 	<name>yggdrasil-dsl-fps-sanctions</name>
@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.orwellg.yggdrasil</groupId>
 		<artifactId>super-pom-fps</artifactId>
-		<version>19.01.15-SNAPSHOT</version>
+		<version>19.01.24</version>
 		<relativePath></relativePath>
 	</parent>
 	
