@@ -29,6 +29,7 @@ import com.orwellg.umbrella.commons.storm.topology.component.bolt.BasicRichBolt;
 import com.orwellg.umbrella.commons.utils.enums.AccountingTagsTypes;
 import com.orwellg.umbrella.commons.utils.enums.CommandTypes;
 import com.orwellg.umbrella.commons.utils.enums.KafkaHeaders;
+import com.orwellg.umbrella.commons.utils.enums.Systems;
 import com.orwellg.umbrella.commons.utils.enums.TransactionEvents;
 import com.orwellg.yggdrasil.commons.factories.ClusterFactory;
 import com.orwellg.yggdrasil.commons.net.Cluster;
@@ -144,7 +145,8 @@ public class FpsAccountingCommandBoltFail extends BasicRichBolt {
         commandData.getTransactionInfo().setDirection(TransactionDirection.INCOMING);
         commandData.getTransactionInfo().setTransactionType(TransactionType.CREDIT);
 
-
+        // Entry Origin
+        commandData.setEntryOrigin(Systems.FPS.getSystem());
         commandData.setAccountingTags(listTags);
 
         return commandData;
